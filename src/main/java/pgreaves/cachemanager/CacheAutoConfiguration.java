@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
@@ -30,11 +31,13 @@ public class CacheAutoConfiguration {
     CacheManager cacheManager(CacheSettings settings) {
         SimpleCacheManager manager = new SimpleCacheManager();
 
-        List<Cache> caches = settings.getSpec().entrySet().stream()
-                .map(entry -> buildCache(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        if (nonNull(settings.getSpec())) {
+            List<Cache> caches = settings.getSpec().entrySet().stream()
+                    .map(entry -> buildCache(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
 
-        manager.setCaches(caches);
+            manager.setCaches(caches);
+        }
 
         return manager;
     }
